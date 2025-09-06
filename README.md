@@ -1,3 +1,14 @@
+# THIS FORK ADDS THE FOLLOWING FEATURES
+#### Modding Tool
++ Added a new Tool "Replace files by name", Useful for mass replacing assets like .wems or .soundbanks
+
+#### Overstrike
++ Added the ability to remove mods entirely by right clicking them and clicking remove
+
+:)
+
+## Forked ReadMe
+
 ![Overstrike logo](https://github.com/Tkachov/Overstrike/assets/1948111/7d2510a0-7dda-47ad-9b05-ac34dce3186e)
 
 Overstrike is a mod manager for PC ports of Insomniac Games' games.
