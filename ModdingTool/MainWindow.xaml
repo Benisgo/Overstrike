@@ -43,9 +43,10 @@
 						<Separator/>
 						<MenuItem x:Name="Mod_CreateModular" Header="Create .modular..." Click="Mod_CreateModular_Click" />
 					</MenuItem>
-					<MenuItem Header="Tools">
-						<MenuItem x:Name="Tools_CalculateHash" Header="Calculate hash..." Click="Tools_CalculateHash_Click" />
-					</MenuItem>
+                    <MenuItem Header="Tools">
+                        <MenuItem x:Name="Tools_CalculateHash" Header="Calculate hash..." Click="Tools_CalculateHash_Click" />
+						<MenuItem x:Name="Tools_ReplaceFiles" Header="Replaces files by name" Click="Tools_ReplaceFiles_Click" />
+                    </MenuItem>
 					<MenuItem Header="Help">
 						<MenuItem x:Name="Help_JoinDiscord" Header="Join Insomniac-Verse Modding Discord server" Click="Help_JoinDiscord_Click" />
 					</MenuItem>

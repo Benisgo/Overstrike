@@ -43,9 +43,10 @@ namespace ModdingTool {
 
 		// ui
 		private SearchWindow _searchWindow = null;
-		private HashToolWindow _hashToolWindow = null;
+        private HashToolWindow _hashToolWindow = null;
+        private ReplaceByNameWindow _replaceByNameWindow = null;
 
-		public MainWindow() {
+        public MainWindow() {
 			InitializeComponent();
 			CommandBindings.Add(new CommandBinding(AssetsListContextMenu.ExtractAssetCommand, ContextMenu_ExtractAsset));
 			CommandBindings.Add(new CommandBinding(AssetsListContextMenu.ExtractAssetToStageCommand, ContextMenu_ExtractAssetToStage));
@@ -768,13 +769,18 @@ namespace ModdingTool {
 			}
 		}
 
-		private void CloseHashToolWindow() {
-			if (_hashToolWindow != null) {
-				_hashToolWindow.Close();
-			}
-		}
+        private void CloseHashToolWindow() {
+            if (_hashToolWindow != null) {
+                _hashToolWindow.Close();
+            }
+        }
+        private void CloseReplaceByNameWindow() {
+            if (_replaceByNameWindow != null) {
+                _replaceByNameWindow.Close();
+            }
+        }
 
-		private static void SetClipboard(string text) {
+        private static void SetClipboard(string text) {
 			try {
 				Clipboard.SetText(text);
 			} catch {
@@ -978,8 +984,25 @@ namespace ModdingTool {
 				_hashToolWindow.Focus();
 			}
 		}
+		
+private void Tools_ReplaceFiles_Click(object sender, RoutedEventArgs e) {
+            if (_replaceByNameWindow == null) {
+                _replaceByNameWindow = new ReplaceByNameWindow(
+                    _assets,
+                    _assetsByPath,
+                    (asset, filePath) => _replacedAssets.Set(asset, filePath)
+                );
+                _replaceByNameWindow.Closed += (object? sender2, EventArgs e2) => {
+                    _replaceByNameWindow = null;
+                };
+                _replaceByNameWindow.Show();
+            } else {
+                _replaceByNameWindow.Focus();
+            }
+        }
 
-		private void Help_JoinDiscord_Click(object sender, RoutedEventArgs e) {
+
+        private void Help_JoinDiscord_Click(object sender, RoutedEventArgs e) {
 			try {
 				Process.Start(new ProcessStartInfo() {
 					FileName = "https://discord.gg/insomniacversemodding",
@@ -1205,6 +1228,7 @@ namespace ModdingTool {
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
 			CloseSearchWindow();
 			CloseHashToolWindow();
+			CloseReplaceByNameWindow();
 		}
 
 		#endregion
