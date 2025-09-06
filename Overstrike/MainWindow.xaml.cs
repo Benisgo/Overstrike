@@ -17,6 +17,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -1185,36 +1186,49 @@ namespace Overstrike {
 			HideStatusMessageError();
 		}
 
-		private void ModsList_ModEntry_ContextMenuOpening(object sender, ContextMenuEventArgs e) {
-			var showMenu = false;
-
-			var grid = (Grid)sender;
-			if (grid != null) {
-				var mod = (ModEntry)grid.DataContext;
-				if (mod != null) {
-					showMenu = ModEntry.IsTypeFamilyModular(mod.Type);
-				}
-			}
-
-			if (!showMenu) {
-				e.Handled = true;
-				return;
-			}
-		}
 
 		private void EditModules_Click(object sender, RoutedEventArgs e) {
-			var menuItem = (MenuItem)sender;
-			if (menuItem == null) return;
+            var uiElement = sender as FrameworkElement;
+            if (uiElement == null) return;
 
-			var mod = (ModEntry)menuItem.DataContext;
-			if (mod == null) return;
+            var mod = uiElement.DataContext as ModEntry;
+            if (mod == null) return;
 
-			new ModularWizard(mod, this).ShowDialog();
+            new ModularWizard(mod, this).ShowDialog();
 			SaveProfile();
 			MakeModsItems();
-		}
+        }
+        private void RemoveMod_Click(object sender, RoutedEventArgs e) {
+            var uiElement = sender as FrameworkElement;
+            if (uiElement == null) return;
 
-		private void ScriptSettings_EnableScripting_Changed(object sender, RoutedEventArgs e) {
+            var mod = uiElement.DataContext as ModEntry;
+            if (mod == null) return;
+
+            // Remove from the observable collection (removes from UI)
+            _modsList.Remove(mod);
+
+            // Remove from the profile's mod list
+            if (_selectedProfile.Mods != null) {
+                _selectedProfile.Mods.RemoveAll(m => m.Path == mod.Path);
+            }
+
+            // Remove from the global mods list
+            _mods.RemoveAll(m => m.Path == mod.Path);
+
+            // Delete the mod file from disk
+            try {
+                var cwd = Directory.GetCurrentDirectory();
+                var modFilePath = Path.Combine(cwd, "Mods Library", mod.Path);
+                if (File.Exists(modFilePath)) {
+                    File.Delete(modFilePath);
+                }
+            } catch { /* Optionally log or show error */ }
+
+            SaveProfile();
+        }
+
+        private void ScriptSettings_EnableScripting_Changed(object sender, RoutedEventArgs e) {
 			if (!_reactToScriptSettingsChange) return;
 			_selectedProfile.Settings_Scripts_Enabled = (bool)ScriptSettings_EnableScripting.IsChecked;
 			SaveProfile();

@@ -6,10 +6,12 @@
 		xmlns:local="clr-namespace:Overstrike"
 		xmlns:tabs="clr-namespace:Overstrike.Tabs"
 		xmlns:data="clr-namespace:Overstrike.Data"
+        xmlns:converters="clr-namespace:Overstrike.Converters"
 		mc:Ignorable="d"
 		Title="Overstrike" Height="681" Width="1020" MinWidth="1020" WindowStartupLocation="CenterScreen" KeyUp="Window_KeyUp">
-	<Window.Resources>
-		<ItemsPanelTemplate x:Key="ThumbnailListTemplate">
+    <Window.Resources>
+        <converters:ModularTypeToBoolConverter x:Key="ModularTypeConverter" />
+        <ItemsPanelTemplate x:Key="ThumbnailListTemplate">
 			<WrapPanel Orientation="Horizontal" />
 		</ItemsPanelTemplate>
 		<Style TargetType="{x:Type ListViewItem}" x:Key="NotemanagerContainerStyle"></Style>
@@ -160,23 +162,29 @@
 										  SelectionChanged="ModsList_SelectionChanged" MouseLeftButtonDown="ModsList_MouseLeftButtonDown" MouseMove="ModsList_MouseMove" DragEnter="ModsList_DragEnter" Drop="ModsList_Drop" AllowDrop="True" KeyUp="ModsList_KeyUp">
 							<ListView.Resources>
 								<DataTemplate DataType="{x:Type data:ModEntry}">
-									<Grid Height="26" ContextMenuOpening="ModsList_ModEntry_ContextMenuOpening">
-										<Grid.ContextMenu>
-											<ContextMenu>
-												<MenuItem x:Name="EditModules" Header="Edit modules..." Click="EditModules_Click" />
-											</ContextMenu>
-										</Grid.ContextMenu>
-										
-										<Label Content="{Binding Order}" HorizontalAlignment="Left" Margin="-3,0,0,0" Foreground="#AAA" VerticalAlignment="Top" />
+                                    <Grid Height="26">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
 
-										<CheckBox IsChecked="{Binding Install}" HorizontalAlignment="Left" Margin="22,6,0,0"  VerticalAlignment="Top" />
-
-										<Image Source="{Binding Badge}" HorizontalAlignment="Left" Margin="42,7,0,0" Width="40" Height="13" Stretch="Fill" VerticalAlignment="Top" />
-
-										<TextBlock Text="{Binding Name}" ToolTip="{Binding ToolTip}" HorizontalAlignment="Left" Margin="87,5,0,0" VerticalAlignment="Top" />
-									</Grid>
+                                        <Label Grid.Column="0" Content="{Binding Order}" HorizontalAlignment="Left" Margin="-3,0,0,0" Foreground="#AAA" VerticalAlignment="Center" />
+										<CheckBox Grid.Column="1" IsChecked="{Binding Install}" HorizontalAlignment="Left" Margin="0,6,0,0"  VerticalAlignment="Center" />
+										<Image Grid.Column="2" Source="{Binding Badge}" HorizontalAlignment="Left" Margin="7,7,0,0" Width="40" Height="13" Stretch="Fill" VerticalAlignment="Center" />
+										<TextBlock Grid.Column="3" Text="{Binding Name}" ToolTip="{Binding ToolTip}" HorizontalAlignment="Left" Margin="7,3,0,0" VerticalAlignment="Center" />
+                                        <StackPanel Grid.Column="4" Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="7,0,5,0">
+											<Button Content="Configure" Margin="0,0,5,0" Padding="4,0" Click="EditModules_Click" IsEnabled="{Binding Type, Converter={StaticResource ModularTypeConverter}}"/>
+                                            <Button Content="Remove"
+                                                    Padding="4,0"
+                                                    Click="RemoveMod_Click" />
+                                        </StackPanel>
+                                    </Grid>
 								</DataTemplate>
 							</ListView.Resources>
+
 						</local:ListViewEx>
 
 						<Label x:Name="StatusMessage" Opacity="0" Content="Done! 10 mods installed." HorizontalAlignment="Left" Margin="1,4,0,0" Grid.Row="2" Foreground="#AAA" VerticalAlignment="Top" Height="30" MouseLeftButtonUp="StatusMessage_MouseLeftButtonUp" />
